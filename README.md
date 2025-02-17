@@ -64,3 +64,45 @@ To allow public access to your files, ensure the bucket is publicly accessible.
        }
      ]
    }
+
+Note: Replace mywebsite-bucket with your actual bucket name.
+
+Click Save changes.
+
+(Replace with the real screenshot)
+
+Step 3: Upload Website Files to the S3 Bucket
+Now you can upload your website files (e.g., HTML, CSS, JS, images) to your S3 bucket.
+
+3.1 Upload Files Manually
+In your S3 bucket, click on the Upload button.
+
+(Replace with the real screenshot)
+
+Click Add files and select your website files (e.g., index.html, style.css, script.js).
+
+Click Upload to upload the files to your S3 bucket.
+
+(Replace with the real screenshot)
+
+Step 4: Access Your Website
+Once the files are uploaded, you can access your website.
+
+Go back to your S3 bucket.
+
+Under the Properties tab, scroll to Static website hosting.
+
+Copy the Endpoint URL.
+
+Open the Endpoint URL in your browser to view your website.
+
+(Replace with the real screenshot)
+
+Step 5: (Optional) Automate Deployment with GitHub Actions
+To automatically deploy your website to S3 every time you push updates to GitHub, you can use GitHub Actions.
+
+5.1 Set Up GitHub Actions Workflow
+Go to your GitHub repository.
+Click on the Actions tab and then click Set up a workflow yourself or New workflow.
+Create a new file named deploy.yml in the .github/workflows/ directory of your repository.
+5.2 Add the Following Code to deploy.yml:
