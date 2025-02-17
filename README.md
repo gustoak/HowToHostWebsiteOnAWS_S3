@@ -1,150 +1,113 @@
-# Host a Website on Amazon S3 from GitHub
+# Hosting a Website on Amazon S3 using GitHub
 
-This guide will walk you through the steps to host a static website on Amazon S3 using an existing GitHub repository. We will cover creating an S3 bucket, configuring the bucket for static hosting, uploading website files, and automating deployment using GitHub Actions.
+This guide will show you how to host a static website on Amazon S3 using files stored in a GitHub repository.
+
+## Prerequisites
+
+Before you begin, ensure you have the following:
+- An Amazon Web Services (AWS) account
+- A GitHub repository with your website files (HTML, CSS, JS, etc.)
+- Basic knowledge of Amazon S3 and AWS Console
 
 ---
 
-## Step 1: Set Up an S3 Bucket for Website Hosting
+## Step 1: Create an S3 Bucket
 
-### 1.1 Create an S3 Bucket
-1. Go to the [**Amazon S3 Console**](https://console.aws.amazon.com/s3/).
+1. Go to the [Amazon S3 Console](https://console.aws.amazon.com/s3/).
+   
+   [insert image: AWS S3 Console]
+
 2. Click on the **Create bucket** button.
 
-   ![Create Bucket](https://www.example.com/criar_bucket.png)  
-   *(Replace with the real screenshot)*
+3. Provide a globally unique name for your bucket (e.g., `my-website-bucket`).
 
-3. Choose a **unique name** for your bucket (e.g., `mywebsite-bucket`). The bucket name must be globally unique.
-4. Select the **region** for the bucket (e.g., `US East (N. Virginia)`).
-5. Leave other options as default unless needed (e.g., versioning, logging).
+4. Choose a region for your bucket (choose a region close to your audience).
+
+5. Uncheck **Block all public access** to allow your website to be publicly accessible.
+   
+   > **Warning:** This will make your bucket publicly accessible. Ensure that the contents are intended to be publicly available.
+
 6. Click on **Create bucket**.
 
-   ![Bucket Creation Screen](https://www.example.com/tela_criacao_bucket.png)  
-   *(Replace with the real screenshot)*
+   [insert image: Create S3 Bucket]
 
 ---
 
-### 1.2 Enable Static Website Hosting
-1. After the bucket is created, click on it to open it.
-2. Navigate to the **Properties** tab.
+## Step 2: Enable Static Website Hosting
 
-   ![Bucket Properties Tab](https://www.example.com/propriedades_bucket.png)  
-   *(Replace with the real screenshot)*
+1. After your bucket is created, go to your bucket's properties.
 
-3. Scroll down to the **Static website hosting** section and click **Edit**.
-4. Select **Enable** and choose **Host a static website**.
-5. In the **Index document** field, type `index.html`.
-6. In the **Error document** field, type `error.html` (optional).
-7. Click **Save changes**.
+2. Scroll down and click on **Static website hosting**.
 
-   ![Static Website Hosting Settings](https://www.example.com/configuracoes_hospedagem_estatica.png)  
-   *(Replace with the real screenshot)*
+3. Select **Use this bucket to host a website**.
 
----
+4. In the **Index document** field, enter `index.html` (or whatever your homepage file is named).
 
-## Step 2: Make the Bucket Public
+5. Optionally, enter an **Error document** (e.g., `error.html`).
 
-To allow public access to your files, ensure the bucket is publicly accessible.
+6. Click **Save changes**.
 
-### 2.1 Modify Bucket Policy to Allow Public Access
-1. Navigate to the **Permissions** tab of your bucket.
-2. Under **Block public access**, click **Edit** and uncheck **Block all public access** (if checked).
-3. Confirm changes by clicking **Save changes**.
-
-   ![Public Access Settings](https://www.example.com/configuracoes_acesso_publico.png)  
-   *(Replace with the real screenshot)*
-
-### 2.2 Set Bucket Policy
-1. Under the **Permissions** tab, click on **Bucket Policy**.
-2. Add the following policy to allow public access to all files:
-
-   ```json
-   {
-     "Version": "2012-10-17",
-     "Statement": [
-       {
-         "Sid": "PublicReadGetObject",
-         "Effect": "Allow",
-         "Action": "s3:GetObject",
-         "Resource": "arn:aws:s3:::mywebsite-bucket/*"
-       }
-     ]
-   }
-
-> **Note:** Replace `mywebsite-bucket` with your actual bucket name.
-
-Click **Save changes**.
-
-_(Replace with the real screenshot)_
+   [insert image: Enable Static Website Hosting]
 
 ---
 
-## Step 3: Upload Website Files to the S3 Bucket
+## Step 3: Upload Website Files to S3
 
-Now you can upload your website files (e.g., HTML, CSS, JS, images) to your S3 bucket.
+1. Go to your bucket and click on the **Upload** button.
 
-### 3.1 Upload Files Manually
-1. In your **S3 bucket**, click on the **Upload** button.
+2. Click on **Add files** and select all the website files from your local machine or GitHub.
 
-   _(Replace with the real screenshot)_
+3. Once the files are selected, click **Upload**.
 
-2. Click **Add files** and select your website files (e.g., `index.html`, `style.css`, `script.js`).
-3. Click **Upload** to upload the files to your S3 bucket.
-
-   _(Replace with the real screenshot)_
+   [insert image: Upload Files to S3]
 
 ---
 
-## Step 4: Access Your Website
+## Step 4: Make Your Files Public
 
-Once the files are uploaded, you can access your website.
+1. Select all the files in your S3 bucket.
 
-1. Go back to your **S3 bucket**.
-2. Under the **Properties** tab, scroll to **Static website hosting**.
-3. Copy the **Endpoint URL**.
-4. Open the **Endpoint URL** in your browser to view your website.
+2. Click on the **Actions** dropdown and choose **Make public**.
 
-   _(Replace with the real screenshot)_
+3. Confirm that you want to make the files public.
+
+   [insert image: Make Files Public]
 
 ---
 
-## Step 5: (Optional) Automate Deployment with GitHub Actions
+## Step 5: Link Your GitHub Repository to S3
 
-To automatically deploy your website to S3 every time you push updates to GitHub, you can use **GitHub Actions**.
+To automate deploying from GitHub, we can set up GitHub Actions.
 
-### 5.1 Set Up GitHub Actions Workflow
-1. Go to your **GitHub repository**.
-2. Click on the **Actions** tab and then click **Set up a workflow yourself** or **New workflow**.
-3. Create a new file named `deploy.yml` in the `.github/workflows/` directory of your repository.
+1. Go to your GitHub repository.
 
-### 5.2 Add the Following Code to `deploy.yml`:
+2. Under the **Actions** tab, create a new workflow by clicking on **New workflow**.
+
+3. Add the following YAML configuration for GitHub Actions:
 
 ```yaml
-name: Deploy to S3
+name: Deploy Website to S3
 
 on:
   push:
     branches:
-      - main  # Trigger the action on changes to the main branch
+      - main  # Trigger on push to the main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Install AWS CLI
-      run: |
-        curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
-        sudo ./aws/install
+      - name: Setup AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Change to your desired region
 
-    - name: Configure AWS CLI
-      run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws configure set default.region us-east-1
-
-    - name: Sync files to S3
-      run: aws s3 sync ./ s3://mywebsite-bucket/ --delete
+      - name: Sync files to S3
+        run: |
+          aws s3 sync . s3://<your-bucket-name> --exclude ".git/*" --acl public-read
